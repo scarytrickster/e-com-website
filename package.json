@@ -1,0 +1,44 @@
+{
+  "name": "rststore",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "type": "module",
+  "imports": {
+    "#config/*": "./server/config/*",
+    "#data/*": "./server/data/*",
+    "#models/*": "./server/models/*",
+    "#routes/*": "./server/routes/*",
+    "#middlewares/*": "./server/middlewares/*",
+    "#controllers/*": "./server/controllers/*",
+    "#utils/*": "./server/utils/*"
+  },
+  "scripts": {
+    "start": "node server/main.js",
+    "server": "nodemon server/main.js",
+    "client": "npm run dev --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "data:import": "node server/seeder",
+    "data:destroy": "node server/seeder -d"
+  },
+  "license": "UNLICENSED",
+  "author": "Tejas Rapelli",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "colors": "^1.4.0",
+    "concurrently": "^9.1.2",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.1",
+    "morgan": "^1.10.0",
+    "multer": "^2.0.1",
+    "nodemon": "^3.1.10"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.27.2",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.12"
+  }
+}
