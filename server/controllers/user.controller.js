@@ -109,15 +109,15 @@ const updateUserProfile = async (req, res) => {
       user.password = req.body.password;
     }
 
-    const updateUser = await user.save();
+    const updatedUser = await user.save();
 
     generateToken(res, updateUser._id);
 
     res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      isAdmin: user.isAdmin,
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin,
     });
   } else {
     res.status(404);
@@ -131,7 +131,8 @@ const updateUserProfile = async (req, res) => {
  * @access	private/admin
  */
 const getUsers = async (req, res) => {
-  res.send('Get all users');
+  const users = await UserModel.find({});
+  res.status(200).json(users);
 };
 
 /**
@@ -140,7 +141,13 @@ const getUsers = async (req, res) => {
  * @access	private/admin
  */
 const getUserById = async (req, res) => {
-  res.send('Get single user');
+  const user = await UserModel.findById(req.params.id).select('-password');
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(400);
+    throw new Error('User Not found');
+  }
 };
 
 /**
@@ -149,7 +156,24 @@ const getUserById = async (req, res) => {
  * @access	private/admin
  */
 const updateUser = async (req, res) => {
-  res.send('Update user');
+  const user = await UserModel.findById(req.params.id);
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.isAdmin = req.body.isAdmin;
+
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin,
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
 };
 
 /**
@@ -158,7 +182,17 @@ const updateUser = async (req, res) => {
  * @access	private/admin
  */
 const deleteUser = async (req, res) => {
-  res.send('Delete user');
+  const user = await UserModel.findById(req.params.id);
+  if (user) {
+    if (user.isAdmin) {
+      res.status(404);
+      throw new Error('You cannot delete an admin user');
+    }
+
+    await UserModel.deleteOne({ _id: req.params.id });
+    res.status(404);
+    throw new Error('User not Found');
+  }
 };
 
 export {

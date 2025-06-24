@@ -24,6 +24,8 @@ import {
   OrderListScreen,
   ProductListScreen,
   ProductEditScreen,
+  UserListScreen,
+  UserEditScreen,
 } from '@screens';
 import store from './store';
 import PrivateRoute from '@components/Private Route';
@@ -95,6 +97,14 @@ const router = createBrowserRouter([
           {
             path: '/admin/product/:id/edit',
             element: <ProductEditScreen />,
+          },
+          {
+            path: '/admin/userlist',
+            element: <UserListScreen />,
+          },
+          {
+            path: '/admin/user/:id/edit',
+            element: <UserEditScreen />,
           },
         ],
       },

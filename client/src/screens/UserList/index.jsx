@@ -1,47 +1,25 @@
+import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import Alert from '@components/Alert';
 import Loader from '@components/Loader';
-// import {
-//   useCreateProductMutation,
-//   useDeleteProductMutation,
-//   useGetProductsQuery,
-// } from '@slices/productApiSlice';
+// import { useGetUsersQuery } from '@slices/userApiSlice';
+import { useGetUsersQuery, useDeleteUserMutation } from '@slices/userApislice';
 
-import {
-  useCreateProductMutation,
-  useDeleteProductMutation,
-  useGetProductsQuery,
-} from '@slices/productSlice';
+const UserListScreen = () => {
+  const { data: users, error, isLoading, refetch } = useGetUsersQuery();
 
-const ProductListScreen = () => {
-  const { data: products, error, isLoading, refetch } = useGetProductsQuery();
-
-  const [createProduct, { isLoading: loadingCreate }] =
-    useCreateProductMutation();
-
-  const [deleteProduct, { isLoading: loadingDelete }] =
-    useDeleteProductMutation();
+  const [deleteUser, { isLoading: loadingDelete }] = useDeleteUserMutation();
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure?')) {
       try {
-        await deleteProduct(id);
-        toast.success('Product deleted successfully');
-      } catch (error) {
-        toast.error(error?.data?.message || error?.error);
-      }
-    }
-  };
-
-  const handleCreateProduct = async () => {
-    if (window.confirm('Are you sure you want to create a new product?')) {
-      try {
-        await createProduct();
+        await deleteUser(id);
+        toast.success('user deleted Successfully');
         refetch();
       } catch (error) {
-        toast.error(error?.data?.message || error?.error);
+        toast.error(error?.data?.message || error?.message);
       }
     }
   };
@@ -51,14 +29,14 @@ const ProductListScreen = () => {
       <div className='mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8'>
         <div className='flex justify-between'>
           <h1 className='text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl'>
-            All Products
+            All Users
           </h1>
 
           <button
-            onClick={handleCreateProduct}
+            onClick={() => {}}
             type='submit'
             className='rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm transition-all hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50'>
-            {loadingCreate ? 'Loading...' : 'Create Product'}
+            Create User
           </button>
         </div>
 
@@ -86,17 +64,12 @@ const ProductListScreen = () => {
                       <th
                         scope='col'
                         className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'>
-                        Price
+                        Email
                       </th>
                       <th
                         scope='col'
                         className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'>
-                        Category
-                      </th>
-                      <th
-                        scope='col'
-                        className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'>
-                        Brand
+                        Admin
                       </th>
                       <th
                         scope='col'
@@ -106,31 +79,32 @@ const ProductListScreen = () => {
                     </tr>
                   </thead>
                   <tbody className='divide-y divide-gray-200'>
-                    {products.map((product) => (
-                      <tr key={product._id}>
+                    {users.map((user) => (
+                      <tr key={user._id}>
                         <td className='whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0'>
-                          {product._id}
+                          {user._id}
                         </td>
                         <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
-                          {product.name}
+                          {user.name}
                         </td>
                         <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
-                          <span className='font-bold'>₹{product.price}</span>
+                          <span className='font-bold'>{user.email}</span>
                         </td>
                         <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
-                          {product.category}
-                        </td>
-                        <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
-                          {product.brand}
+                          {user.isAdmin ? (
+                            <CheckCircleIcon className='h-5 w-5 text-green-600' />
+                          ) : (
+                            ''
+                          )}
                         </td>
                         <td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0'>
                           <Link
-                            to={`/admin/product/${product._id}/edit`}
+                            to={`/admin/user/${user._id}/edit`}
                             className='text-indigo-600 hover:text-indigo-900'>
                             Edit
                           </Link>
                           <button
-                            onClick={() => handleDelete(product._id)}
+                            onClick={() => handleDelete(user._id)}
                             type='button'
                             className='ml-3 rounded bg-red-50 px-2 py-1 text-sm font-semibold text-red-700 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50'>
                             {loadingDelete ? 'Deleting...' : 'Delete'}
@@ -149,4 +123,4 @@ const ProductListScreen = () => {
   );
 };
 
-export default ProductListScreen;
+export default UserListScreen;

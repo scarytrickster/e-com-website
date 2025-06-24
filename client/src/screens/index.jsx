@@ -12,3 +12,5 @@ export { default as ProfileScreen } from './Profile';
 export { default as OrderListScreen } from './OrdersList';
 export { default as ProductListScreen } from './ProductList';
 export { default as ProductEditScreen } from './ProductEdit';
+export { default as UserListScreen } from './UserList';
+export { default as UserEditScreen } from './UserEdit';
