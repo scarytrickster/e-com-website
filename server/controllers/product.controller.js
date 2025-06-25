@@ -2,13 +2,24 @@ import ProductModel from '#models/product.model.js';
 
 /**
  * @desc		Fetch all products
- * @route		GET /api/v1/products
+ * @route		GET /api/v1/products?pageNumber=2&keyword=tshirt
  * @access	public
  */
 
 const getProducts = async (req, res) => {
-  const products = await ProductModel.find({});
-  res.json(products);
+  const pageSize = 2;
+  const page = +req.query.pageNumber || 1;
+
+  const keyword = req.query.keyword
+    ? { name: { $regex: req.query.keyword, $options: 'i' } }
+    : {};
+
+  const count = await ProductModel.countDocuments({ ...keyword });
+
+  const products = await ProductModel.find({ ...keyword })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
+  res.json({ products, page, pages: Math.ceil(count / pageSize) });
 };
 
 /**
