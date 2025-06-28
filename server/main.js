@@ -51,6 +51,19 @@ app.use('/api/v1/config/paypal', (req, res) => {
 const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '/client/dist')));
+
+  app.get('{/*splat}', (req, res) => {
+    console.log(path.resolve());
+    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.json({ message: 'API is running' });
+  });
+}
+
 app.use(errorHandler);
 
 app.listen(port, () => {
